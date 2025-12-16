@@ -1,7 +1,18 @@
-const CACHE_NAME = 'dnd-dice-v2';
+const CACHE_NAME = 'dnd-dice-v3';
+
+// Get the base path dynamically
+const getBasePath = () => {
+  const path = location.pathname;
+  const base = path.substring(0, path.lastIndexOf('/') + 1);
+  return base;
+};
+
+const BASE_PATH = getBasePath();
+
 const urlsToCache = [
-  './dnd-dice.html',
-  './manifest.json'
+  BASE_PATH,
+  `${BASE_PATH}dnd-dice.html`,
+  `${BASE_PATH}manifest.json`
 ];
 
 // Install event - cache files
@@ -10,7 +21,9 @@ self.addEventListener('install', event => {
     caches.open(CACHE_NAME)
       .then(cache => {
         console.log('Opened cache');
-        return cache.addAll(urlsToCache);
+        return cache.addAll(urlsToCache).catch(err => {
+          console.log('Cache addAll error:', err);
+        });
       })
   );
   // Force the waiting service worker to become the active service worker

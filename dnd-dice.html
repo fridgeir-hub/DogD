@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a1a2e">
+    <title>D&D Teningakast</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        :root {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --accent-primary: #e94560;
+            --accent-secondary: #c93550;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --overlay-bg: rgba(255, 255, 255, 0.1);
+            --overlay-border: rgba(255, 255, 255, 0.2);
+            --shadow-color: rgba(233, 69, 96, 0.3);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f0f4f8;
+            --bg-secondary: #e2e8f0;
+            --accent-primary: #e94560;
+            --accent-secondary: #c93550;
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+            --overlay-bg: rgba(255, 255, 255, 0.9);
+            --overlay-border: rgba(0, 0, 0, 0.1);
+            --shadow-color: rgba(233, 69, 96, 0.2);
+        }
+
+        [data-theme="purple"] {
+            --bg-primary: #2d1b69;
+            --bg-secondary: #1e1348;
+            --accent-primary: #a855f7;
+            --accent-secondary: #9333ea;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --overlay-bg: rgba(255, 255, 255, 0.1);
+            --overlay-border: rgba(255, 255, 255, 0.2);
+            --shadow-color: rgba(168, 85, 247, 0.4);
+        }
+
+        [data-theme="green"] {
+            --bg-primary: #064e3b;
+            --bg-secondary: #053524;
+            --accent-primary: #10b981;
+            --accent-secondary: #059669;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --overlay-bg: rgba(255, 255, 255, 0.1);
+            --overlay-border: rgba(255, 255, 255, 0.2);
+            --shadow-color: rgba(16, 185, 129, 0.4);
+        }
+
+        [data-theme="blue"] {
+            --bg-primary: #0c4a6e;
+            --bg-secondary: #075985;
+            --accent-primary: #0ea5e9;
+            --accent-secondary: #0284c7;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --overlay-bg: rgba(255, 255, 255, 0.1);
+            --overlay-border: rgba(255, 255, 255, 0.2);
+            --shadow-color: rgba(14, 165, 233, 0.4);
+        }
+
+        [data-theme="orange"] {
+            --bg-primary: #7c2d12;
+            --bg-secondary: #431407;
+            --accent-primary: #f97316;
+            --accent-secondary: #ea580c;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --overlay-bg: rgba(255, 255, 255, 0.1);
+            --overlay-border: rgba(255, 255, 255, 0.2);
+            --shadow-color: rgba(249, 115, 22, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            padding-top: 100px;
+            padding-bottom: 80px;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .top-controls {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--overlay-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--overlay-border);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .dice-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .dice-button {
+            background: linear-gradient(145deg, var(--accent-primary), var(--accent-secondary));
+            border: none;
+            border-radius: 15px;
+            padding: 25px 10px;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px var(--shadow-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dice-button:active {
+            transform: scale(0.95);
+        }
+
+        .dice-button.rolling {
+            animation: shake 0.5s ease-in-out, glow 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0) rotate(0deg); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-8px) rotate(-5deg); }
+            20%, 40%, 60%, 80% { transform: translateX(8px) rotate(5deg); }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 5px 15px var(--shadow-color); }
+            50% { box-shadow: 0 0 30px var(--shadow-color), 0 0 40px var(--shadow-color); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes slideIn {
+            from { 
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-display.update {
+            animation: pulse 0.4s ease-out;
+        }
+
+        .dice-name {
+            display: block;
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .dice-type {
+            display: block;
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .result-display {
+            background: var(--overlay-bg);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--overlay-border);
+        }
+
+        .result-number {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--accent-primary);
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+        }
+
+        .result-label {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            color: var(--text-secondary);
+        }
+
+        .history {
+            background: var(--overlay-bg);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .history h2 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--accent-primary);
+        }
+
+        .history-item {
+            background: var(--overlay-bg);
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid var(--accent-primary);
+        }
+
+        .history-item .dice-rolled {
+            font-weight: bold;
+            color: var(--accent-primary);
+        }
+
+        .history-item .result-rolled {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .clear-history {
+            background: var(--overlay-bg);
+            border: 1px solid var(--overlay-border);
+            color: var(--text-primary);
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 15px;
+            width: 100%;
+            font-size: 0.9rem;
+        }
+
+        .clear-history:active {
+            background: var(--overlay-border);
+        }
+
+        .empty-history {
+            text-align: center;
+            opacity: 0.5;
+            padding: 20px;
+        }
+
+        .multi-roll {
+            background: var(--overlay-bg);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .multi-roll h3 {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: var(--accent-primary);
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .quantity-control button {
+            background: var(--accent-primary);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .quantity-control button:active {
+            background: var(--accent-secondary);
+        }
+
+        .quantity-display {
+            flex: 1;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .advantage-section {
+            background: var(--overlay-bg);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .advantage-section h3 {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: var(--accent-primary);
+        }
+
+        .advantage-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .advantage-btn {
+            background: var(--overlay-bg);
+            border: 2px solid var(--overlay-border);
+            color: var(--text-primary);
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .advantage-btn.active {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            font-weight: bold;
+            color: white;
+        }
+
+        .advantage-btn:active {
+            transform: scale(0.95);
+        }
+
+        .critical-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .critical-success {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .critical-fail {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .save-section {
+            background: var(--overlay-bg);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .save-section h3 {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: var(--accent-primary);
+        }
+
+        .save-toggle {
+            margin-bottom: 15px;
+        }
+
+        .toggle-btn {
+            background: var(--overlay-bg);
+            border: 2px solid var(--overlay-border);
+            color: var(--text-primary);
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn.active {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            font-weight: bold;
+            color: white;
+        }
+
+        .save-controls {
+            display: none;
+        }
+
+        .save-controls.active {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .save-input-group {
+            margin-bottom: 15px;
+        }
+
+        .save-input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .save-input-group select,
+        .save-input-group input {
+            width: 100%;
+            background: var(--overlay-bg);
+            border: 1px solid var(--overlay-border);
+            color: var(--text-primary);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .save-input-group select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 35px;
+        }
+
+        .save-input-group select option {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            padding: 10px;
+        }
+
+        [data-theme="light"] .save-input-group select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%231a202c' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+        }
+
+        .save-input-group input[type="number"] {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .save-result-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .save-success {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .save-fail {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .sound-toggle.muted {
+            opacity: 0.5;
+        }
+
+        .sound-toggle {
+            background: var(--overlay-bg);
+            border: 2px solid var(--overlay-border);
+            color: var(--text-primary);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .sound-toggle:active {
+            transform: scale(0.9);
+        }
+
+        .theme-selector {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .theme-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .theme-btn:active {
+            transform: scale(0.9);
+        }
+
+        .theme-btn.active {
+            border-color: var(--text-primary);
+            box-shadow: 0 0 10px var(--shadow-color);
+        }
+
+        .theme-btn[data-theme="dark"] {
+            background: linear-gradient(135deg, #1a1a2e, #e94560);
+        }
+
+        .theme-btn[data-theme="light"] {
+            background: linear-gradient(135deg, #f0f4f8, #e94560);
+        }
+
+        .theme-btn[data-theme="purple"] {
+            background: linear-gradient(135deg, #2d1b69, #a855f7);
+        }
+
+        .theme-btn[data-theme="green"] {
+            background: linear-gradient(135deg, #064e3b, #10b981);
+        }
+
+        .theme-btn[data-theme="blue"] {
+            background: linear-gradient(135deg, #0c4a6e, #0ea5e9);
+        }
+
+        .theme-btn[data-theme="orange"] {
+            background: linear-gradient(135deg, #7c2d12, #f97316);
+        }
+
+        .sound-toggle {
+            background: var(--overlay-bg);
+            border: 2px solid var(--overlay-border);
+            color: var(--text-primary);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .sound-toggle:active {
+            transform: scale(0.9);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-box {
+            background: var(--bg-primary);
+            border: 2px solid var(--overlay-border);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--accent-primary);
+        }
+
+        .modal-message {
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: none;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-btn-confirm {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        .modal-btn-confirm:hover {
+            background: var(--accent-secondary);
+        }
+
+        .modal-btn-cancel {
+            background: var(--overlay-bg);
+            color: var(--text-primary);
+            border: 2px solid var(--overlay-border);
+        }
+
+        .modal-btn-cancel:hover {
+            background: var(--overlay-border);
+        }
+
+        .modal-btn:active {
+            transform: scale(0.95);
+        }
+
+        @media (max-width: 480px) {
+            .dice-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .result-number {
+                font-size: 3rem;
+            }
+
+            .top-controls {
+                padding: 10px 15px;
+            }
+
+            .theme-btn {
+                width: 30px;
+                height: 30px;
+            }
+
+            .sound-toggle {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+
+            body {
+                padding-top: 85px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal-box">
+            <div class="modal-title" id="modalTitle">Staðfesta</div>
+            <div class="modal-message" id="modalMessage">Ertu viss?</div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Hætta við</button>
+                <button class="modal-btn modal-btn-confirm" id="modalConfirmBtn">Staðfesta</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="top-controls">
+        <div class="theme-selector">
+            <button class="theme-btn active" data-theme="dark" onclick="setTheme('dark')" title="Dark Red"></button>
+            <button class="theme-btn" data-theme="light" onclick="setTheme('light')" title="Light"></button>
+            <button class="theme-btn" data-theme="purple" onclick="setTheme('purple')" title="Purple"></button>
+            <button class="theme-btn" data-theme="green" onclick="setTheme('green')" title="Green"></button>
+            <button class="theme-btn" data-theme="blue" onclick="setTheme('blue')" title="Blue"></button>
+            <button class="theme-btn" data-theme="orange" onclick="setTheme('orange')" title="Orange"></button>
+        </div>
+        <button class="sound-toggle" onclick="toggleSound()" id="soundBtn">🔊</button>
+    </div>
+    
+    <div class="container">
+        <h1>🎲 D&D Teningakast</h1>
+
+        <div class="result-display" id="resultDisplay">
+            <div class="result-number" id="resultNumber">—</div>
+            <div class="result-label" id="resultLabel">Veldu teninga</div>
+        </div>
+
+        <div class="multi-roll">
+            <h3>Fjöldi teninga</h3>
+            <div class="quantity-control">
+                <button onclick="changeQuantity(-1)">−</button>
+                <div class="quantity-display" id="quantityDisplay">1</div>
+                <button onclick="changeQuantity(1)">+</button>
+            </div>
+        </div>
+
+        <div class="multi-roll">
+            <h3>Modifier (bónus/refsi)</h3>
+            <div class="quantity-control">
+                <button onclick="changeModifier(-1)">−</button>
+                <div class="quantity-display" id="modifierDisplay">0</div>
+                <button onclick="changeModifier(1)">+</button>
+            </div>
+        </div>
+
+        <div class="advantage-section">
+            <h3>Advantage/Disadvantage (D20)</h3>
+            <div class="advantage-buttons">
+                <button class="advantage-btn" onclick="setAdvantageMode('disadvantage')" id="btn-disadvantage">
+                    Disadvantage
+                </button>
+                <button class="advantage-btn active" onclick="setAdvantageMode('normal')" id="btn-normal">
+                    Venjulegt
+                </button>
+                <button class="advantage-btn" onclick="setAdvantageMode('advantage')" id="btn-advantage">
+                    Advantage
+                </button>
+            </div>
+        </div>
+
+        <div class="save-section">
+            <h3>Saving Throw / Ability Check</h3>
+            <div class="save-toggle">
+                <button class="toggle-btn" onclick="toggleSaveMode()" id="saveToggleBtn">
+                    Virkja Save/Check
+                </button>
+            </div>
+            <div class="save-controls" id="saveControls">
+                <div class="save-input-group">
+                    <label for="saveType">Tegund:</label>
+                    <select id="saveType">
+                        <option value="strength">Strength Save</option>
+                        <option value="dexterity">Dexterity Save</option>
+                        <option value="constitution">Constitution Save</option>
+                        <option value="intelligence">Intelligence Save</option>
+                        <option value="wisdom">Wisdom Save</option>
+                        <option value="charisma">Charisma Save</option>
+                        <option value="athletics">Athletics Check</option>
+                        <option value="acrobatics">Acrobatics Check</option>
+                        <option value="sleight">Sleight of Hand Check</option>
+                        <option value="stealth">Stealth Check</option>
+                        <option value="arcana">Arcana Check</option>
+                        <option value="history">History Check</option>
+                        <option value="investigation">Investigation Check</option>
+                        <option value="nature">Nature Check</option>
+                        <option value="religion">Religion Check</option>
+                        <option value="animal">Animal Handling Check</option>
+                        <option value="insight">Insight Check</option>
+                        <option value="medicine">Medicine Check</option>
+                        <option value="perception">Perception Check</option>
+                        <option value="survival">Survival Check</option>
+                        <option value="deception">Deception Check</option>
+                        <option value="intimidation">Intimidation Check</option>
+                        <option value="performance">Performance Check</option>
+                        <option value="persuasion">Persuasion Check</option>
+                    </select>
+                </div>
+                <div class="save-input-group">
+                    <label for="saveDC">DC (Difficulty Class):</label>
+                    <input type="number" id="saveDC" value="15" min="1" max="30">
+                </div>
+            </div>
+        </div>
+
+        <div class="dice-grid">
+            <button class="dice-button" onclick="rollDice(4)">
+                <span class="dice-name">D4</span>
+                <span class="dice-type">1-4</span>
+            </button>
+            <button class="dice-button" onclick="rollDice(6)">
+                <span class="dice-name">D6</span>
+                <span class="dice-type">1-6</span>
+            </button>
+            <button class="dice-button" onclick="rollDice(8)">
+                <span class="dice-name">D8</span>
+                <span class="dice-type">1-8</span>
+            </button>
+            <button class="dice-button" onclick="rollDice(10)">
+                <span class="dice-name">D10</span>
+                <span class="dice-type">1-10</span>
+            </button>
+            <button class="dice-button" onclick="rollDice(12)">
+                <span class="dice-name">D12</span>
+                <span class="dice-type">1-12</span>
+            </button>
+            <button class="dice-button" onclick="rollDice(20)">
+                <span class="dice-name">D20</span>
+                <span class="dice-type">1-20</span>
+            </button>
+            <button class="dice-button" onclick="rollDice(100)">
+                <span class="dice-name">D100</span>
+                <span class="dice-type">1-100</span>
+            </button>
+        </div>
+
+        <div class="history">
+            <h2>📜 Saga</h2>
+            <div id="historyList" class="empty-history">
+                Ekkert kast ennþá
+            </div>
+            <button class="clear-history" onclick="clearHistory()" id="clearBtn" style="display: none;">
+                Hreinsa sögu
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let quantity = 1;
+        let modifier = 0;
+        let advantageMode = 'normal';
+        let saveMode = false;
+        let soundEnabled = true;
+        let currentTheme = 'dark';
+        let history = [];
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('dnd-theme') || 'dark';
+        setTheme(savedTheme);
+
+        function setTheme(theme) {
+            currentTheme = theme;
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('dnd-theme', theme);
+            
+            // Update active button
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.theme-btn[data-theme="${theme}"]`).classList.add('active');
+        }
+
+        // Audio context for sound effects
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        // Embedded dice roll sound as base64 - using Web Audio API
+        const diceAudioBase64 = "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HUawVWGvlVAyCruIngqCwNHvER5lQd4i4aWCvrBUFeWgr5bBpUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/7kmTvjPPqZkKDKUDgP+AoJRRAAA7tXQRMmE/I+ADfADEAAFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVU0wAlRWgy8GIAoS1iFYXBDSFExMwv5oIWlFpRJ1FJlSK9kcxg0kJAhZAmgtIicWZaC5k40o+LzaNOLMuNyaNKLi42pp2uNz9/uVLM7XGzUyzxuVNHFlXG5UyUXF5U0cacWYeBiEtNlUtNMrvp//7TT+QNVVTDVJV0iVaqYapKukSiqABVxYWb//6xUVFhYWFhdn/8VFRUUFhYWFhUVFRUUb/1ioqLCwsLC4qKioqLC3+KioqKCwsLCwqKiojFBYWFhYVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/+5Jkog/0EEIkgw8x0kCAFBIAIwAAAAGkAAAAIAAANIAAAARVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV";
+        let diceAudioBuffer = null;
+        
+        // Decode the audio data
+        async function loadDiceAudio() {
+            try {
+                const binaryString = atob(diceAudioBase64);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                diceAudioBuffer = await audioContext.decodeAudioData(bytes.buffer);
+            } catch (e) {
+                console.log('Failed to load dice audio:', e);
+            }
+        }
+        loadDiceAudio();
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            
+            if (type === 'roll') {
+                // Play the dice roll using Web Audio API
+                if (diceAudioBuffer) {
+                    const source = audioContext.createBufferSource();
+                    source.buffer = diceAudioBuffer;
+                    const gainNode = audioContext.createGain();
+                    gainNode.gain.value = 0.5;
+                    source.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    source.start(0);
+                }
+                return;
+            }
+
+            // Use synthesized sounds for other effects
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            if (type === 'critical-success') {
+                // Triumphant ascending tone
+                oscillator.frequency.setValueAtTime(523, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(659, audioContext.currentTime + 0.1);
+                oscillator.frequency.setValueAtTime(784, audioContext.currentTime + 0.2);
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.3);
+            } else if (type === 'critical-fail') {
+                // Descending sad tone
+                oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.3);
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.3);
+            } else if (type === 'save-success') {
+                oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(800, audioContext.currentTime + 0.1);
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.2);
+            } else if (type === 'save-fail') {
+                oscillator.frequency.setValueAtTime(300, audioContext.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(150, audioContext.currentTime + 0.2);
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.2);
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const btn = document.getElementById('soundBtn');
+            btn.textContent = soundEnabled ? '🔊' : '🔇';
+            btn.classList.toggle('muted', !soundEnabled);
+            
+            if (soundEnabled) {
+                playSound('roll');
+            }
+        }
+
+        function toggleSaveMode() {
+            saveMode = !saveMode;
+            const btn = document.getElementById('saveToggleBtn');
+            const controls = document.getElementById('saveControls');
+            
+            btn.classList.toggle('active', saveMode);
+            controls.classList.toggle('active', saveMode);
+            btn.textContent = saveMode ? 'Slökkva á Save/Check' : 'Virkja Save/Check';
+        }
+
+        function changeQuantity(delta) {
+            quantity = Math.max(1, Math.min(10, quantity + delta));
+            document.getElementById('quantityDisplay').textContent = quantity;
+        }
+
+        function changeModifier(delta) {
+            modifier = Math.max(-20, Math.min(20, modifier + delta));
+            const display = modifier >= 0 ? `+${modifier}` : modifier;
+            document.getElementById('modifierDisplay').textContent = display;
+        }
+
+        function setAdvantageMode(mode) {
+            advantageMode = mode;
+            
+            document.getElementById('btn-disadvantage').classList.remove('active');
+            document.getElementById('btn-normal').classList.remove('active');
+            document.getElementById('btn-advantage').classList.remove('active');
+            document.getElementById(`btn-${mode}`).classList.add('active');
+        }
+
+        function rollDice(sides) {
+            const button = event.target.closest('.dice-button');
+            button.classList.add('rolling');
+            
+            playSound('roll');
+            
+            setTimeout(() => {
+                button.classList.remove('rolling');
+            }, 500);
+
+            let results = [];
+            let total = 0;
+            let displayText = '';
+            let isCritical = null;
+            let saveResult = null;
+
+            // Handle advantage/disadvantage for D20
+            if (sides === 20 && advantageMode !== 'normal') {
+                const roll1 = Math.floor(Math.random() * 20) + 1;
+                const roll2 = Math.floor(Math.random() * 20) + 1;
+                
+                const selectedRoll = advantageMode === 'advantage' 
+                    ? Math.max(roll1, roll2) 
+                    : Math.min(roll1, roll2);
+                
+                results.push(selectedRoll);
+                total = selectedRoll + modifier;
+                
+                const advText = advantageMode === 'advantage' ? 'Advantage' : 'Disadvantage';
+                displayText = `D20 ${advText} (${roll1}, ${roll2}) → ${selectedRoll}`;
+                
+                if (selectedRoll === 20) isCritical = 'success';
+                if (selectedRoll === 1) isCritical = 'fail';
+                
+            } else {
+                for (let i = 0; i < quantity; i++) {
+                    const roll = Math.floor(Math.random() * sides) + 1;
+                    results.push(roll);
+                    total += roll;
+                }
+                
+                total += modifier;
+
+                if (sides === 20 && quantity === 1) {
+                    if (results[0] === 20) isCritical = 'success';
+                    if (results[0] === 1) isCritical = 'fail';
+                }
+            }
+
+            // Check save if enabled and D20
+            if (saveMode && sides === 20) {
+                const dc = parseInt(document.getElementById('saveDC').value);
+                const saveType = document.getElementById('saveType').value;
+                
+                saveResult = {
+                    success: total >= dc,
+                    dc: dc,
+                    type: saveType
+                };
+
+                if (saveResult.success) {
+                    setTimeout(() => playSound('save-success'), 200);
+                } else {
+                    setTimeout(() => playSound('save-fail'), 200);
+                }
+            }
+
+            // Play critical sounds
+            if (isCritical === 'success') {
+                setTimeout(() => playSound('critical-success'), 200);
+            } else if (isCritical === 'fail') {
+                setTimeout(() => playSound('critical-fail'), 200);
+            }
+
+            // Display result with animation
+            const resultDisplay = document.getElementById('resultDisplay');
+            const resultNumber = document.getElementById('resultNumber');
+            const resultLabel = document.getElementById('resultLabel');
+            
+            resultDisplay.classList.add('update');
+            setTimeout(() => resultDisplay.classList.remove('update'), 400);
+            
+            resultNumber.textContent = total;
+            
+            if (displayText) {
+                resultLabel.textContent = displayText;
+            } else if (quantity === 1) {
+                resultLabel.textContent = `D${sides}`;
+            } else {
+                resultLabel.textContent = `${quantity}D${sides} (${results.join(' + ')})`;
+            }
+
+            if (modifier !== 0) {
+                const modText = modifier >= 0 ? `+${modifier}` : modifier;
+                resultLabel.textContent += ` ${modText}`;
+            }
+
+            addToHistory(sides, quantity, results, total, modifier, displayText, isCritical, saveResult);
+        }
+
+        function addToHistory(sides, qty, results, total, mod, displayText, isCritical, saveResult) {
+            const timestamp = new Date().toLocaleTimeString('is-IS', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+
+            history.unshift({
+                sides,
+                quantity: qty,
+                results,
+                total,
+                modifier: mod,
+                timestamp,
+                displayText,
+                isCritical,
+                saveResult
+            });
+
+            if (history.length > 15) {
+                history.pop();
+            }
+
+            updateHistoryDisplay();
+        }
+
+        function updateHistoryDisplay() {
+            const historyList = document.getElementById('historyList');
+            const clearBtn = document.getElementById('clearBtn');
+
+            if (history.length === 0) {
+                historyList.innerHTML = '<div class="empty-history">Ekkert kast ennþá</div>';
+                clearBtn.style.display = 'none';
+                return;
+            }
+
+            clearBtn.style.display = 'block';
+
+            historyList.innerHTML = history.map(item => {
+                let notation = '';
+                let details = '';
+                
+                if (item.displayText) {
+                    notation = item.displayText;
+                } else {
+                    notation = item.quantity > 1 ? `${item.quantity}D${item.sides}` : `D${item.sides}`;
+                    details = item.quantity > 1 ? ` (${item.results.join(' + ')})` : '';
+                }
+                
+                if (item.modifier !== 0) {
+                    const modText = item.modifier >= 0 ? `+${item.modifier}` : item.modifier;
+                    details += ` ${modText}`;
+                }
+
+                let criticalBadge = '';
+                if (item.isCritical === 'success') {
+                    criticalBadge = '<span class="critical-badge critical-success">NAT 20! 🎉</span>';
+                } else if (item.isCritical === 'fail') {
+                    criticalBadge = '<span class="critical-badge critical-fail">NAT 1! 💀</span>';
+                }
+
+                let saveBadge = '';
+                if (item.saveResult) {
+                    const saveTypeText = document.querySelector(`#saveType option[value="${item.saveResult.type}"]`)?.text || item.saveResult.type;
+                    if (item.saveResult.success) {
+                        saveBadge = `<span class="save-result-badge save-success">✓ ${saveTypeText} DC ${item.saveResult.dc}</span>`;
+                    } else {
+                        saveBadge = `<span class="save-result-badge save-fail">✗ ${saveTypeText} DC ${item.saveResult.dc}</span>`;
+                    }
+                }
+                
+                return `
+                    <div class="history-item">
+                        <div>
+                            <span class="dice-rolled">${notation}</span>
+                            <span style="opacity: 0.6; font-size: 0.9rem;">${details}</span>
+                            ${criticalBadge}
+                            ${saveBadge}
+                            <div style="font-size: 0.8rem; opacity: 0.5; margin-top: 3px;">${item.timestamp}</div>
+                        </div>
+                        <div class="result-rolled">${item.total}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function showModal(title, message, onConfirm) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = message;
+            document.getElementById('confirmModal').classList.add('active');
+            
+            const confirmBtn = document.getElementById('modalConfirmBtn');
+            // Remove old listeners by cloning
+            const newConfirmBtn = confirmBtn.cloneNode(true);
+            confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+            
+            newConfirmBtn.onclick = () => {
+                closeModal();
+                onConfirm();
+            };
+        }
+
+        function closeModal() {
+            document.getElementById('confirmModal').classList.remove('active');
+        }
+
+        function clearHistory() {
+            console.log('clearHistory called, history length:', history.length);
+            
+            if (history.length === 0) {
+                showModal('Sögulistinn er tómur', 'Það eru engin kast til að eyða.', () => {});
+                return;
+            }
+            
+            showModal(
+                'Hreinsa sögu?',
+                `Þetta mun eyða öllum ${history.length} köstum. Þessi aðgerð er óafturkræf.`,
+                () => {
+                    history = [];
+                    updateHistoryDisplay();
+                    console.log('History cleared');
+                }
+            );
+        }
+
+        // PWA support
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(() => {});
+        }
+    </script>
+</body>
+</html>

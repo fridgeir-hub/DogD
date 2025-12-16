@@ -23,14 +23,20 @@
 2. Opnaðu í vafra
 3. Byrjaðu að kasta! 🎲
 
-### Fyrir PWA stuðning (3 skrár)
-1. Hladdu niður öllum þremur skránum:
-   - `dnd-dice.html`
+### Fyrir GitHub Pages
+1. Hladdu niður öllum skránum:
+   - `index.html` (aðalskrá)
    - `manifest.json`
    - `sw.js`
-2. Settu allar skrárnar í sömu möppu
-3. Opnaðu `dnd-dice.html` í vafra
-4. Á mobile: Smelltu á "Add to Home Screen"
+2. Settu í GitHub repository
+3. Virkjaðu GitHub Pages
+4. Farðu á `https://username.github.io/repo-name/`
+
+### Fyrir PWA á síma
+1. Opnaðu síðuna í vafra (Safari/Chrome)
+2. Smelltu á "Add to Home Screen" / "Bæta við heimaskjá"
+3. Appið setur sig upp sem standalone app
+4. Virkar offline!
 
 ## 📱 Progressive Web App
 
@@ -93,9 +99,15 @@ Veldu úr 6 fallegum litaþemum:
 
 ## 📄 Skrár
 
+### Fyrir standalone notkun:
 - **dnd-dice.html** - Aðalskráin (64KB) - Þetta er allt sem þú þarft!
-- **manifest.json** - PWA metadata (valkvæmt)
-- **sw.js** - Service Worker fyrir offline (valkvæmt)
+
+### Fyrir GitHub Pages / PWA:
+- **index.html** - Aðalskráin (sama og dnd-dice.html)
+- **manifest.json** - PWA metadata
+- **sw.js** - Service Worker fyrir offline
+
+**Athugið:** `index.html` og `dnd-dice.html` eru sama skráin. GitHub Pages notar `index.html` sjálfkrafa.
 
 ## 🎯 Notkunardæmi
 
