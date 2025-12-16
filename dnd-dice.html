@@ -344,11 +344,22 @@
             background: var(--overlay-bg);
             border: 2px solid var(--overlay-border);
             color: var(--text-primary);
-            padding: 12px;
+            padding: 12px 8px;
             border-radius: 10px;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             transition: all 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .advantage-btn .btn-short-text {
+            display: none;
+        }
+
+        .advantage-btn .btn-full-text {
+            display: inline;
         }
 
         .advantage-btn.active {
@@ -689,6 +700,99 @@
 
             body {
                 padding-top: 85px;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+                margin-bottom: 20px;
+            }
+
+            .advantage-btn {
+                font-size: 0.85rem;
+                padding: 10px 6px;
+            }
+
+            .advantage-btn .btn-full-text {
+                display: none;
+            }
+
+            .advantage-btn .btn-short-text {
+                display: inline;
+            }
+
+            .multi-roll h3,
+            .advantage-section h3,
+            .save-section h3 {
+                font-size: 1rem;
+            }
+
+            .quantity-control button {
+                width: 35px;
+                height: 35px;
+                font-size: 1.3rem;
+            }
+
+            .quantity-display {
+                font-size: 1.3rem;
+            }
+
+            .save-input-group label {
+                font-size: 0.85rem;
+            }
+
+            .save-input-group select,
+            .save-input-group input {
+                font-size: 0.9rem;
+                padding: 8px;
+            }
+
+            .history h2 {
+                font-size: 1.1rem;
+            }
+
+            .history-item {
+                padding: 10px 12px;
+                font-size: 0.9rem;
+            }
+
+            .modal-box {
+                padding: 25px 20px;
+                width: 95%;
+            }
+
+            .modal-title {
+                font-size: 1.3rem;
+            }
+
+            .modal-message {
+                font-size: 1rem;
+            }
+
+            .modal-btn {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .advantage-btn {
+                font-size: 0.75rem;
+                padding: 8px 4px;
+            }
+
+            .dice-button {
+                padding: 20px 8px;
+                font-size: 1.1rem;
+            }
+
+            .dice-name {
+                font-size: 1.3rem;
+            }
+
+            .result-number {
+                font-size: 2.5rem;
             }
         }
     </style>
@@ -746,14 +850,17 @@
         <div class="advantage-section">
             <h3>Advantage/Disadvantage (D20)</h3>
             <div class="advantage-buttons">
-                <button class="advantage-btn" onclick="setAdvantageMode('disadvantage')" id="btn-disadvantage">
-                    Disadvantage
+                <button class="advantage-btn" onclick="setAdvantageMode('disadvantage')" id="btn-disadvantage" data-short="Disadv." data-full="Disadvantage">
+                    <span class="btn-full-text">Disadvantage</span>
+                    <span class="btn-short-text">Disadv.</span>
                 </button>
-                <button class="advantage-btn active" onclick="setAdvantageMode('normal')" id="btn-normal">
-                    Venjulegt
+                <button class="advantage-btn active" onclick="setAdvantageMode('normal')" id="btn-normal" data-short="Normal" data-full="Venjulegt">
+                    <span class="btn-full-text">Venjulegt</span>
+                    <span class="btn-short-text">Normal</span>
                 </button>
-                <button class="advantage-btn" onclick="setAdvantageMode('advantage')" id="btn-advantage">
-                    Advantage
+                <button class="advantage-btn" onclick="setAdvantageMode('advantage')" id="btn-advantage" data-short="Adv." data-full="Advantage">
+                    <span class="btn-full-text">Advantage</span>
+                    <span class="btn-short-text">Adv.</span>
                 </button>
             </div>
         </div>
