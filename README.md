@@ -4,7 +4,9 @@
 
 ## ✨ Eiginleikar
 
-- **Allir D&D teningar**: D4, D6, D8, D10, D12, D20, D100
+- **Allir D&D teningar**: D4, D6, D8, D10, D12, D20
+- **D100 (Percentile)**: Kastar á tugum (10, 20, 30... 100)
+- **Myntkast**: 50/50 (Þorskhaus/Land)
 - **Margir teningar í einu**: Kastaðu 1-10 teningum samtímis
 - **Modifier**: Bættu við bónus eða refsi (-20 til +20)
 - **Advantage/Disadvantage**: Fyrir D20 kast
