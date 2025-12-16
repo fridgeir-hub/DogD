@@ -1,6 +1,7 @@
 {
   "name": "D&D Teningakast",
   "short_name": "Teningar",
+  "version": "1.0.0",
   "description": "D&D teningakast fyrir alla helstu teninga",
   "start_url": ".",
   "scope": ".",

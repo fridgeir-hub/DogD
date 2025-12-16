@@ -1,4 +1,5 @@
-const CACHE_NAME = 'dnd-dice-v3';
+const CACHE_NAME = 'dnd-dice-v1.0.0';
+const VERSION = '1.0.0';
 
 // Get the base path dynamically
 const getBasePath = () => {
