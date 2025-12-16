@@ -117,6 +117,18 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
+        .top-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .version-badge {
+            font-size: 0.75rem;
+            opacity: 0.6;
+            white-space: nowrap;
+        }
+
         h1 {
             text-align: center;
             margin-bottom: 20px;
@@ -682,6 +694,14 @@
             transform: scale(0.95);
         }
 
+        .version-footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            opacity: 0.5;
+            font-size: 0.85rem;
+        }
+
         @media (max-width: 480px) {
             .dice-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -708,6 +728,10 @@
                 width: 40px;
                 height: 40px;
                 font-size: 1.2rem;
+            }
+
+            .version-badge {
+                display: none;
             }
 
             body {
@@ -840,13 +864,16 @@
     </div>
 
     <div class="top-controls">
-        <div class="theme-selector">
-            <button class="theme-btn active" data-theme="dark" onclick="setTheme('dark')" title="Dark Red"></button>
-            <button class="theme-btn" data-theme="light" onclick="setTheme('light')" title="Light"></button>
-            <button class="theme-btn" data-theme="purple" onclick="setTheme('purple')" title="Purple"></button>
-            <button class="theme-btn" data-theme="green" onclick="setTheme('green')" title="Green"></button>
-            <button class="theme-btn" data-theme="blue" onclick="setTheme('blue')" title="Blue"></button>
-            <button class="theme-btn" data-theme="orange" onclick="setTheme('orange')" title="Orange"></button>
+        <div class="top-left">
+            <div class="theme-selector">
+                <button class="theme-btn active" data-theme="dark" onclick="setTheme('dark')" title="Dark Red"></button>
+                <button class="theme-btn" data-theme="light" onclick="setTheme('light')" title="Light"></button>
+                <button class="theme-btn" data-theme="purple" onclick="setTheme('purple')" title="Purple"></button>
+                <button class="theme-btn" data-theme="green" onclick="setTheme('green')" title="Green"></button>
+                <button class="theme-btn" data-theme="blue" onclick="setTheme('blue')" title="Blue"></button>
+                <button class="theme-btn" data-theme="orange" onclick="setTheme('orange')" title="Orange"></button>
+            </div>
+            <div class="version-badge">v1.0.0</div>
         </div>
         <button class="sound-toggle" onclick="toggleSound()" id="soundBtn">🔊</button>
     </div>
@@ -1358,4 +1385,3 @@
     </script>
 </body>
 </html>
-
