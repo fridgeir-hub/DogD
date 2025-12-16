@@ -991,9 +991,13 @@
                 <span class="dice-name">D20</span>
                 <span class="dice-type">1-20</span>
             </button>
-            <button class="dice-button" onclick="rollDice(100)">
+            <button class="dice-button" onclick="rollPercentile()">
                 <span class="dice-name">D100</span>
-                <span class="dice-type">1-100</span>
+                <span class="dice-type">10-100</span>
+            </button>
+            <button class="dice-button" onclick="flipCoin()">
+                <span class="dice-name">🪙</span>
+                <span class="dice-type">Mynt</span>
             </button>
         </div>
 
@@ -1252,6 +1256,67 @@
             }
 
             addToHistory(sides, quantity, results, total, modifier, displayText, isCritical, saveResult);
+        }
+
+        function rollPercentile() {
+            const button = event.target.closest('.dice-button');
+            button.classList.add('rolling');
+            
+            playSound('roll');
+            
+            setTimeout(() => {
+                button.classList.remove('rolling');
+            }, 500);
+
+            // Roll percentile dice (10, 20, 30... 100)
+            const roll = (Math.floor(Math.random() * 10) + 1) * 10;
+            const total = roll + modifier;
+
+            // Display result
+            const resultDisplay = document.getElementById('resultDisplay');
+            const resultNumber = document.getElementById('resultNumber');
+            const resultLabel = document.getElementById('resultLabel');
+            
+            resultDisplay.classList.add('update');
+            setTimeout(() => resultDisplay.classList.remove('update'), 400);
+            
+            resultNumber.textContent = total;
+            resultLabel.textContent = 'D100 (percentile)';
+
+            if (modifier !== 0) {
+                const modText = modifier >= 0 ? `+${modifier}` : modifier;
+                resultLabel.textContent += ` ${modText}`;
+            }
+
+            addToHistory(100, 1, [roll], total, modifier, 'D100 (percentile)', null, null);
+        }
+
+        function flipCoin() {
+            const button = event.target.closest('.dice-button');
+            button.classList.add('rolling');
+            
+            playSound('roll');
+            
+            setTimeout(() => {
+                button.classList.remove('rolling');
+            }, 500);
+
+            // Flip coin (50/50)
+            const result = Math.random() < 0.5 ? 'Heads' : 'Tails';
+            const resultIcelandic = result === 'Heads' ? 'Þorskhaus' : 'Land';
+
+            // Display result
+            const resultDisplay = document.getElementById('resultDisplay');
+            const resultNumber = document.getElementById('resultNumber');
+            const resultLabel = document.getElementById('resultLabel');
+            
+            resultDisplay.classList.add('update');
+            setTimeout(() => resultDisplay.classList.remove('update'), 400);
+            
+            resultNumber.textContent = resultIcelandic;
+            resultLabel.textContent = 'Myntkast';
+
+            addToHistory('coin', 1, [resultIcelandic], resultIcelandic, 0, 'Myntkast', null, null);
         }
 
         function addToHistory(sides, qty, results, total, mod, displayText, isCritical, saveResult) {
